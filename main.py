@@ -20,10 +20,6 @@ class Item(BaseModel):
     url: str
     wait: int
 
-# 创建相应模式
-class Response(BaseModel):
-    text:str
-
 
 @app.post("/")
 async def read_root(item: Item):
