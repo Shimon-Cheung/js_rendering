@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @Author ：Shimon-Cheung
-@Date   ：2020/9/30 11:29
+@Date   ：2021/03/22 16:39
 @Desc   ：基于fastapi高性能的js渲染服务
 """
 from fastapi import FastAPI
@@ -9,6 +9,8 @@ from pyppeteer import launch
 import uvicorn
 import asyncio
 from pydantic import BaseModel
+from starlette.responses import HTMLResponse
+
 
 app = FastAPI()
 
@@ -18,6 +20,10 @@ class Item(BaseModel):
     url: str
     wait: int
 
+# 创建相应模式
+class Response(BaseModel):
+    text:str
+
 
 @app.post("/")
 async def read_root(item: Item):
@@ -26,7 +32,7 @@ async def read_root(item: Item):
     browser = await launch(
         {
             # 无头模式
-            'headless': True,
+            'headless': False,
             # 忽略 Https 报错信息
             'ignoreHTTPSErrors': True,
             # 防止多开导致的假死
@@ -49,15 +55,19 @@ async def read_root(item: Item):
     )
     # 打开一个页面
     page = await browser.newPage()
-    await page.setViewport({'width': 1920, 'height': 1080})  # 设置页面的大小
-    await page.setJavaScriptEnabled(enabled=True)  # 开启js渲染
+    # 设置页面的大小
+    await page.setViewport({'width': 1920, 'height': 1080})
+    # 开启js渲染
+    await page.setJavaScriptEnabled(enabled=True)
+    # 进行全局的js渲染，用来解决页面二次跳转
+    await page.evaluateOnNewDocument('function(){Object.defineProperty(navigator, "webdriver", {get: () => undefined})}')
     # 打开链接
     await page.goto(item_dict["url"])
     # 用来等待渲染结果
     await asyncio.sleep(item_dict["wait"])
     page_text = await page.content()  # 页面内容
     await browser.close()
-    return {"data": page_text}
+    return HTMLResponse(page_text)
 
 
 if __name__ == '__main__':
