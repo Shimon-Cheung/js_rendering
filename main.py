@@ -21,14 +21,14 @@ class Item(BaseModel):
     wait: int
 
 
-@app.post("/")
+@app.post("/render")
 async def read_root(item: Item):
     item_dict = item.dict()
     # 使用launch方法调用浏览器，其参数可以传递关键字参数也可以传递字典。
     browser = await launch(
         {
             # 无头模式
-            'headless': False,
+            'headless': True,
             # 忽略 Https 报错信息
             'ignoreHTTPSErrors': True,
             # 防止多开导致的假死
@@ -56,7 +56,7 @@ async def read_root(item: Item):
     # 开启js渲染
     await page.setJavaScriptEnabled(enabled=True)
     # 进行全局的js渲染，用来解决页面二次跳转
-    await page.evaluateOnNewDocument('function(){Object.defineProperty(navigator, "webdriver", {get: () => undefined})}')
+    await page.evaluateOnNewDocument('function(){Object.defineProperty(navigator,"webdriver",{get:()=>undefined})}')
     # 打开链接
     await page.goto(item_dict["url"])
     # 用来等待渲染结果
