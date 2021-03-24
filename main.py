@@ -11,7 +11,6 @@ import asyncio
 from pydantic import BaseModel
 from starlette.responses import HTMLResponse
 
-
 app = FastAPI()
 
 
@@ -28,7 +27,7 @@ async def read_root(item: Item):
     browser = await launch(
         {
             # 无头模式
-            'headless': False,
+            'headless': True,
             # 忽略 Https 报错信息
             'ignoreHTTPSErrors': True,
             # 防止多开导致的假死
@@ -42,11 +41,20 @@ async def read_root(item: Item):
                 '--start-maximized',
                 # 关闭沙盒模式
                 '--no-sandbox',
+                # 设置报错等级规避一大堆info信息
+                "--log-level=3",
+                # 允许跨域
+                "--disable-web-security",
                 # 设置UA请求头
-                '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36',
+                '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                'Chrome/85.0.4183.121 Safari/537.36',
                 # 添加代理，暂时不开启
                 # "--proxy-server=http://127.0.0.1:80"
-            ]
+            ],
+            # pyppeteer 异常处理 ValueError: signal only works in main thread
+            'handleSIGINT': False,
+            'handleSIGTERM': False,
+            'handleSIGHUP': False,
         }
     )
     # 打开一个页面
