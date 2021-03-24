@@ -21,14 +21,14 @@ class Item(BaseModel):
     wait: int
 
 
-@app.post("/render")
+@app.post("/render.html")
 async def read_root(item: Item):
     item_dict = item.dict()
     # 使用launch方法调用浏览器，其参数可以传递关键字参数也可以传递字典。
     browser = await launch(
         {
             # 无头模式
-            'headless': True,
+            'headless': False,
             # 忽略 Https 报错信息
             'ignoreHTTPSErrors': True,
             # 防止多开导致的假死
@@ -67,4 +67,4 @@ async def read_root(item: Item):
 
 
 if __name__ == '__main__':
-    uvicorn.run(app)
+    uvicorn.run(app, host='0.0.0.0', port=8050)
