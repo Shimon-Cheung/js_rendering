@@ -12,8 +12,6 @@ from pydantic import BaseModel
 from starlette.responses import HTMLResponse
 
 app = FastAPI()
-
-
 # 创建数据模型
 class Item(BaseModel):
     url: str
