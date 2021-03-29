@@ -5,4 +5,3 @@
 - 服务器启动命令 uvicorn main:app --reload --host '0.0.0.0' --port 8050
 - docker启动命令 docker build -t js_render:v1 . && docker run -d -p 8050:8050 js_render:v1
 - api文档访问 http://127.0.0.1:8000/docs
-
