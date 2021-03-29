@@ -25,7 +25,7 @@ async def read_root(item: Item):
     browser = await launch(
         {
             # 无头模式
-            "headless": False,
+            "headless": True,
             # 忽略 Https 报错信息
             "ignoreHTTPSErrors": True,
             # 防止多开导致的假死
