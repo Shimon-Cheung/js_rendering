@@ -25,6 +25,7 @@ class Item(BaseModel):
 @app.post("/render.html")
 async def read_root(item: Item):
     item_dict = item.dict()
+
     # 使用launch方法调用浏览器，其参数可以传递关键字参数也可以传递字典。
     browser = await launch(
         {
@@ -51,7 +52,7 @@ async def read_root(item: Item):
                 "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36",
                 # 添加代理，暂时不开启
                 # "--proxy-server=http://127.0.0.1:80"
-            ]
+            ],
         }
     )
     # 打开一个页面
